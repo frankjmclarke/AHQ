@@ -50,4 +50,3 @@ const parseMermaidFlowchart = (inputText, convertCurlyToUpperCase = false) => {
 
   return flowchart;
 };
-

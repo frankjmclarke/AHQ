@@ -57,6 +57,34 @@ const lineColors = [
 	"green"
 ];
 
+const rotateDirectionClockwise = (direction) => {
+    switch (direction) {
+        case Direction.UP:
+            return Direction.RIGHT;
+        case Direction.RIGHT:
+            return Direction.DOWN;
+        case Direction.DOWN:
+            return Direction.LEFT;
+        case Direction.LEFT:
+            return Direction.UP;
+        default:
+            return direction;
+    }
+};
+const rotateDirectionAntiClockwise = (direction) => {
+    switch (direction) {
+        case Direction.UP:
+            return Direction.LEFT;
+        case Direction.LEFT:
+            return Direction.DOWN;
+        case Direction.DOWN:
+            return Direction.RIGHT;
+        case Direction.RIGHT:
+            return Direction.UP;
+        default:
+            return direction;
+    }
+};
 const rectangleLib = {
     rectangles: [], // Array to store rectangles
 
@@ -66,44 +94,50 @@ const rectangleLib = {
         return newRect;
     },
 
-createRoom: function(roomString, x, y, scale) {
-    const index = roomStrings.indexOf(roomString);
-    let prevRect = null; // Declare prevRect outside of the conditional
-    if (index !== -1) {
-        const size = sizes[index];
-        const fillColor = fillColors[index];
-        const lineColor = lineColors[index];
-        const [width, height] = size.map(val => val * scale);
-        let newX = x;
-        let newY = y;
-        if (x < 0 && y < 0 && this.rectangles.length > 0) {
-            // If both x and y are negative, and there are existing rectangles
-            prevRect = this.rectangles[this.rectangles.length - 1]; // Retrieve the last rectangle
-            switch (prevRect.direction) {
-                case Direction.UP:
-                    newY = prevRect.y - height;
-                    break;
-                case Direction.DOWN:
-                    newY = prevRect.y + prevRect.height;
-                    break;
-                case Direction.LEFT:
-                    newX = prevRect.x - width;
-                    break;
-                case Direction.RIGHT:
-                    newX = prevRect.x + prevRect.width;
-                    newY = prevRect.y; // Adjust newY to align the top edge
-                    break;
-                default:
-                    break;
+    createRoom: function(roomString, x, y, scale) {
+        const index = roomStrings.indexOf(roomString);
+        let prevRect = null; // Declare prevRect outside of the conditional
+        if (index !== -1) {
+            const size = sizes[index];
+            const fillColor = fillColors[index];
+            const lineColor = lineColors[index];
+            const [width, height] = size.map(val => val * scale);
+            let newX = x;
+            let newY = y;
+            if (x < 0 && y < 0 && this.rectangles.length > 0) {
+                // If both x and y are negative, and there are existing rectangles
+                prevRect = this.rectangles[this.rectangles.length - 1]; // Retrieve the last rectangle
+                if (prevRect.roomString === "Right Turn") {
+                    prevRect.direction = rotateDirectionClockwise(prevRect.direction);
+                } else if (prevRect.roomString === "Left Turn") {
+                    prevRect.direction = rotateDirectionAntiClockwise(prevRect.direction);
+                }
+                switch (prevRect.direction) {
+                    case Direction.UP:
+                        newY = prevRect.y - height;
+                        break;
+                    case Direction.DOWN:
+                        newY = prevRect.y + prevRect.height;
+                        break;
+                    case Direction.LEFT:
+                        newX = prevRect.x - width;
+                        break;
+                    case Direction.RIGHT:
+                        newX = prevRect.x + prevRect.width;
+                        newY = prevRect.y; // Adjust newY to align the top edge
+                        break;
+                    default:
+                        break;
+                }
             }
+            const newDirection = prevRect ? prevRect.direction : Direction.RIGHT;
+            const newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, newDirection, roomString);
+            return newRect;
+        } else {
+            console.error("Room string not found in the mapping.");
+            return null;
         }
-        const newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, prevRect ? prevRect.direction : Direction.RIGHT, roomString);
-        return newRect;
-    } else {
-        console.error("Room string not found in the mapping.");
-        return null;
-    }
-},
+    },
 
 
 

@@ -7,21 +7,33 @@ function handleBracketedText(text) {
         // Adding the missing case as highlighted
         case "!Start Exploration":
             console.log("Handling '!Start Exploration'");
-            newRect = rectangleLib.createRoom("Stairs Down", 0, 15, 5, direction = Direction.LEFT)			
+            newRect = rectangleLib.createRoom("Stairs Down", 0, 15, 5, direction = Direction.LEFT);			
 			rectangleLib.rectangles.push(newRect);			
 			rectangleLib.drawAllRectangles(ctx);			
             break;
         case "!Place 1 Section Passage":
             console.log("Handling '!Place 1 Section Passage'");
-            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT)	
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
 			rectangleLib.rectangles.push(newRect);			
 			rectangleLib.drawAllRectangles(ctx);				
             break;
         case "!Place 2 Sections Passage":
             console.log("Handling '!Place 2 Sections Passage'");
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
+			rectangleLib.rectangles.push(newRect);	
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
+			rectangleLib.rectangles.push(newRect);	            		
+			rectangleLib.drawAllRectangles(ctx);            
             break;
         case "!Place 3 Sections Passage":
             console.log("Handling '!Place 3 Sections Passage'");
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
+			rectangleLib.rectangles.push(newRect);	
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
+			rectangleLib.rectangles.push(newRect);	 
+            newRect = rectangleLib.createRoom("Corridor", -1, -1, 5, direction = Direction.LEFT);	
+			rectangleLib.rectangles.push(newRect);	           		
+			rectangleLib.drawAllRectangles(ctx);  
             break;
         case "!T-Junction":
             console.log("Handling '!T-Junction'");
@@ -31,9 +43,15 @@ function handleBracketedText(text) {
             break;
         case "!Right Turn":
             console.log("Handling '!Right Turn'");
+            newRect = rectangleLib.createRoom("Right Turn", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx);
             break;
         case "!Left Turn":
             console.log("Handling '!Left Turn'");
+            newRect = rectangleLib.createRoom("Left Turn", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx);
             break;
         case "!Stairs Down":
             console.log("Handling '!Stairs Down'");
