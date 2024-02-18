@@ -1,10 +1,13 @@
+let lastVisitedNode = null;
+
+
 const traverseFlowchart = (flowchart, startId) => {
   const visited = new Set(); // To avoid revisiting nodes
 
   const visitNode = (id) => {
     if (visited.has(id)) return; // Prevent infinite loops
     visited.add(id); // Mark as visited
-
+    lastVisitedNode = id;
     const node = flowchart[id];
     if (!node) {
       printOut(`Node ${id} does not exist.`);

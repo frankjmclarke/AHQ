@@ -40,4 +40,14 @@ const flowchart = parseMermaidFlowchart(mermaidText, true);
 console.log("Flowchart Structure:", flowchart);
 
 // Start traversal (assuming 'A' is the starting point)
-traverseFlowchart(flowchart, 'A');
+//traverseFlowchart(flowchart, 'A');
+
+document.getElementById("placeRectangles").addEventListener("click", function() {
+    // Start traversal (assuming 'A' is the starting point)
+    traverseFlowchart(flowchart, 'A');
+});
+
+document.getElementById("addRectangles").addEventListener("click", function() {
+    // Start traversal (assuming 'A' is the starting point)
+    traverseFlowchart(flowchart, lastVisitedNode);
+});

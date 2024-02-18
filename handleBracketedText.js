@@ -37,9 +37,15 @@ function handleBracketedText(text) {
             break;
         case "!T-Junction":
             console.log("Handling '!T-Junction'");
+            newRect = rectangleLib.createRoom("T-Junction", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx); 
             break;
         case "!Dead End":
             console.log("Handling '!Dead End'");
+            newRect = rectangleLib.createRoom("Dead End", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx);            
             break;
         case "!Right Turn":
             console.log("Handling '!Right Turn'");
@@ -55,9 +61,15 @@ function handleBracketedText(text) {
             break;
         case "!Stairs Down":
             console.log("Handling '!Stairs Down'");
+            newRect = rectangleLib.createRoom("Stairs Down", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx); 
             break;
         case "!Stairs Out":
             console.log("Handling '!Stairs Out'");
+            newRect = rectangleLib.createRoom("Stairs Out", -1, -1, 5, direction = Direction.LEFT)			
+			rectangleLib.rectangles.push(newRect);			
+			rectangleLib.drawAllRectangles(ctx); 
             break;
         case "!Place Small Room, Empty":
             console.log("Handling '!Place Small Room, Empty'");
