@@ -98,52 +98,54 @@ const rectangleLib = {
 
     createRoom: function (roomString, x, y, scale, direction) {
         const index = roomStrings.indexOf(roomString);
-        let prevRect = null; // Declare prevRect outside of the conditional
-        if (index !== -1) {
-            const size = sizes[index];
-            const fillColor = fillColors[index];
-            const lineColor = lineColors[index];
-            const [width, height] = size.map(val => val * scale);
-            let newX = x;
-            let newY = y;
-            let newRect = null;
-            if (x < 0 && y < 0 ) {
-                prevRect = this.rectangles[this.rectangles.length - 1];
-                switch (direction) {
-                    case Direction.DOWN:
-                        newY = prevRect.y + prevRect.height;//reversed
-                        newX = prevRect.x;
-                        newRect = this.createRectangle(newX, newY, height, width, fillColor, lineColor, scale, direction, roomString);
-                        break;
-                    case Direction.UP:
-                        newY = prevRect.y - prevRect.height;//reversed
-                        newX = prevRect.x;
-                        newRect = this.createRectangle(newX, newY, height, width, fillColor, lineColor, scale, direction, roomString);
-                        break;
-                    case Direction.LEFT:
-                        newX = prevRect.x + prevRect.width;
-                        newY = prevRect.y;
-                        newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
-                        break;
-                    case Direction.RIGHT:
-                        newX = prevRect.x - prevRect.width;
-                        newY = prevRect.y;
-                        newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
-                        break;
-                    default:
-                        break;
-                }
-            } else{
-                newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
-            }
-            console.log("height " + height + " width " + width + " direction " + direction + "x " + x + "y " + y + " roomString " + roomString);
-
-            return newRect;
-        } else {
+        if (index === -1) {
             console.error("Room string not found in the mapping.");
             return null;
         }
+
+        const fillColor = fillColors[index];
+        const lineColor = lineColors[index];
+
+        //The size array is being mapped to a new array where each element is multiplied by the scale value.
+        const size = sizes[index]; 
+          [width, height] = size.map(val => val * scale);
+        let newX = x;
+        let newY = y;
+    
+        if (x < 0 && y < 0 ) {
+            const prevRect = this.rectangles[this.rectangles.length - 1];
+            switch (direction) {
+                case Direction.DOWN:
+                    newY = prevRect.y + prevRect.height;
+                    newX = prevRect.x;
+                    temp = width;
+                    width = height;
+                    height = temp;
+                    break;
+                case Direction.UP:
+                    temp = width;
+                    width = height;
+                    height = temp;
+                    newY = prevRect.y - height*scale;
+                    newX = prevRect.x;
+                    break;
+                case Direction.LEFT://reversed between up and down
+                    newX = prevRect.x + prevRect.width;
+                    newY = prevRect.y;
+                    break;
+                case Direction.RIGHT:
+                    newX = prevRect.x + prevRect.width;
+                    newY = prevRect.y;
+                    break;
+            }
+        }
+    
+        const newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
+        console.log("height " + height + " width " + width + " direction " + direction + " x " + x + " y " + y + " roomString " + roomString);
+    
+        return newRect;
     },
+    
 
 
 
