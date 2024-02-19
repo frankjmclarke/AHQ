@@ -1,13 +1,13 @@
-// Purpose: Traverses a flowchart and prints out the text of each node visited.
+// Purpose: Traverses a flowchart and prints out the text of each node visited and a graphic rendering.
 let lastVisitedNode = 'A';
 
 
 const traverseFlowchart = (flowchart, startId) => {
-  const visited = new Set(); // To avoid revisiting nodes
+  //const visited = new Set(); // To avoid revisiting nodes
 
   const visitNode = (id) => {
-    if (visited.has(id)) return; // Prevent infinite loops
-    visited.add(id); // Mark as visited
+    //if (visited.has(id)) return; // Prevent infinite loops
+    //visited.add(id); // Mark as visited
     lastVisitedNode = id;
     const node = flowchart[id];
     if (!node) {
@@ -16,6 +16,9 @@ const traverseFlowchart = (flowchart, startId) => {
     }
 
     printOut(node.text); 
+    if (node.text[0] === "!"){
+      lastVisitedNode = 'C'
+    }
 
     if (node.children.length > 0) {
       let childId;

@@ -1,14 +1,15 @@
 function handleBracketedText(text) {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const scale = 2;
+    const scale = 3;
+
 
     const roomHandlers = {
         "!Start Exploration": () => {
             console.log("Handling '!Start Exploration'");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             rectangleLib.rectangles = []; // Clear the rectangles array
-            const newRect = rectangleLib.createRoom("Stairs Down", 0, 15, scale, direction = Direction.LEFT);
+            const newRect = rectangleLib.createRoom("Stairs Down", 0, 305, scale, rectangleLib.currentDirection);
             rectangleLib.rectangles.push(newRect);
             rectangleLib.drawAllRectangles(ctx);
         },
@@ -46,14 +47,15 @@ function handleBracketedText(text) {
     handler(text);
 
     function handleSingleRoomCreation(roomType) {
-        const newRect = rectangleLib.createRoom(roomType, -1, -1, scale, direction = Direction.AUTO);
+        const newRect = rectangleLib.createRoom(roomType, -1, -1, scale, rectangleLib.currentDirection);
         rectangleLib.rectangles.push(newRect);
         rectangleLib.drawAllRectangles(ctx);
-   /*     if (roomType === "Right Turn") {
+        if (roomType === "Right Turn") {
             rectangleLib.currentDirection = rotateDirectionClockwise(rectangleLib.currentDirection);
         } else if (roomType === "Left Turn") {
             rectangleLib.currentDirection = rotateDirectionAntiClockwise(rectangleLib.currentDirection);
-        }    */    
+        }
+        console.log("Current Direction: " + rectangleLib.currentDirection);     
     }
 
     function createMultipleRooms(roomType, count) {

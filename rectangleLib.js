@@ -3,8 +3,7 @@ const Direction = {
     UP: 'up',
     DOWN: 'down',
     LEFT: 'left',
-    RIGHT: 'right',
-    AUTO: 'auto'    
+    RIGHT: 'right'
 };
 
 class Rectangle {
@@ -36,26 +35,26 @@ class Rectangle {
 }
 
 const sizes = [
-	[2, 2], [2, 2], [2, 2], [2, 2], [2, 2], [2, 2],
-	[5, 2], [5, 5], [5, 5], [5, 10], [5, 10]
+    [2, 2], [2, 2], [2, 2], [2, 2], [2, 2], [2, 2],
+    [5, 2], [5, 5], [5, 5], [5, 10], [5, 10]
 ];
 
 const roomStrings = [
-	"T-Junction", "Dead End", "Right Turn", "Left Turn",
-	"Stairs Down", "Stairs Out", "Corridor", "Normal",
-	"Hazard", "Lair", "Quest"
+    "T-Junction", "Dead End", "Right Turn", "Left Turn",
+    "Stairs Down", "Stairs Out", "Corridor", "Normal",
+    "Hazard", "Lair", "Quest"
 ];
 
 const fillColors = [
-	"red", "blue", "green", "yellow", "black",
-	"red", "blue", "green", "yellow", "black",
-	"red"
+    "red", "blue", "green", "yellow", "black",
+    "red", "blue", "green", "yellow", "black",
+    "red"
 ];
 
 const lineColors = [
-	"blue", "green", "yellow", "black", "red",
-	"blue", "green", "yellow", "black", "red",
-	"green"
+    "blue", "green", "yellow", "black", "red",
+    "blue", "green", "yellow", "black", "red",
+    "green"
 ];
 
 const rotateDirectionClockwise = (direction) => {
@@ -90,13 +89,14 @@ const rotateDirectionAntiClockwise = (direction) => {
 
 const rectangleLib = {
     rectangles: [], // Array to store rectangles
-    createRectangle: function(x, y, width, height, fillColor = 'black', lineColor = 'black', scale = 1, direction = Direction.RIGHT, roomString = "") {
+    createRectangle: function (x, y, width, height, fillColor = 'black', lineColor = 'black', scale = 1, direction = Direction.RIGHT, roomString = "") {
         const newRect = new Rectangle(x, y, width, height, fillColor, lineColor, scale, direction, roomString);
         this.rectangles.push(newRect); // Add the new rectangle to the array
         return newRect;
     },
+    currentDirection: Direction.RIGHT,
 
-    createRoom: function(roomString, x, y, scale, direction = Direction.AUTO) {
+    createRoom: function (roomString, x, y, scale, direction) {
         const index = roomStrings.indexOf(roomString);
         let prevRect = null; // Declare prevRect outside of the conditional
         if (index !== -1) {
@@ -106,34 +106,38 @@ const rectangleLib = {
             const [width, height] = size.map(val => val * scale);
             let newX = x;
             let newY = y;
-            if (direction === Direction.AUTO && this.rectangles.length > 0) {
-                //continue in a straight line unless a turn is required
-                prevRect = this.rectangles[this.rectangles.length - 1]; // Retrieve the last rectangle
-                if (prevRect.roomString == "Right Turn") {
-                    prevRect.direction = rotateDirectionClockwise(prevRect.direction);
-                } else if (prevRect.roomString == "Left Turn") {
-                    prevRect.direction = rotateDirectionAntiClockwise(prevRect.direction);
-                }                
-                switch (prevRect.direction) {
-                    case Direction.UP:
-                        newY = prevRect.y - height;
-                        break;
+            let newRect = null;
+            if (x < 0 && y < 0 ) {
+                prevRect = this.rectangles[this.rectangles.length - 1];
+                switch (direction) {
                     case Direction.DOWN:
-                        newY = prevRect.y + prevRect.height;
+                        newY = prevRect.y + prevRect.height;//reversed
+                        newX = prevRect.x;
+                        newRect = this.createRectangle(newX, newY, height, width, fillColor, lineColor, scale, direction, roomString);
+                        break;
+                    case Direction.UP:
+                        newY = prevRect.y - prevRect.height;//reversed
+                        newX = prevRect.x;
+                        newRect = this.createRectangle(newX, newY, height, width, fillColor, lineColor, scale, direction, roomString);
                         break;
                     case Direction.LEFT:
-                        newX = prevRect.x - width;
+                        newX = prevRect.x + prevRect.width;
+                        newY = prevRect.y;
+                        newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
                         break;
                     case Direction.RIGHT:
-                        newX = prevRect.x + prevRect.width;
-                        newY = prevRect.y; // Adjust newY to align the top edge
+                        newX = prevRect.x - prevRect.width;
+                        newY = prevRect.y;
+                        newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
                         break;
                     default:
                         break;
-                }              
+                }
+            } else{
+                newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
             }
-            const newDirection = prevRect ? prevRect.direction : Direction.RIGHT;
-            const newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, newDirection, roomString);
+            console.log("height " + height + " width " + width + " direction " + direction + "x " + x + "y " + y + " roomString " + roomString);
+
             return newRect;
         } else {
             console.error("Room string not found in the mapping.");
@@ -143,37 +147,43 @@ const rectangleLib = {
 
 
 
-    drawRectangle: function(ctx, rectangle) {
+    drawRectangle: function (ctx, rectangle) {
         rectangle.draw(ctx);
     },
 
-    checkOverlap: function(rect1, rect2) {
+    checkOverlap: function (rect1, rect2) {
         return rect1.overlaps(rect2);
     },
 
-    checkOverlapWithExisting: function(newRectangle) {
+    checkOverlapWithExisting: function (newRectangle) {
         // Check if the newRectangle overlaps with any rectangle in the array
         return this.rectangles.some(existingRect => newRectangle.overlaps(existingRect));
     },
 
-    drawAllRectangles: function(ctx) {
-        // Draw all rectangles stored in the array
-        this.rectangles.forEach(rectangle => rectangle.draw(ctx));
+    drawAllRectangles: function (ctx) {
+        // Check if rectangles array is not null
+        if (this.rectangles) {
+            // Draw all rectangles stored in the array
+            this.rectangles.forEach(rectangle => rectangle.draw(ctx));
+        } else {
+            console.error("Rectangles array is null.");
+        }
     },
+    
 
-    alignLeft: function(rectangle, target) {
+    alignLeft: function (rectangle, target) {
         rectangle.x = target.x - rectangle.width; // Place to the left of the target
     },
 
-    alignRight: function(rectangle, target) {
+    alignRight: function (rectangle, target) {
         rectangle.x = target.x + target.width; // Place to the right of the target
     },
 
-    alignUp: function(rectangle, target) {
+    alignUp: function (rectangle, target) {
         rectangle.y = target.y - rectangle.height; // Place above the target
     },
 
-    alignDown: function(rectangle, target) {
+    alignDown: function (rectangle, target) {
         rectangle.y = target.y + target.height; // Place below the target
     }
 };
