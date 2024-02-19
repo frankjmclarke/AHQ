@@ -1,4 +1,5 @@
-let lastVisitedNode = null;
+// Purpose: Traverses a flowchart and prints out the text of each node visited.
+let lastVisitedNode = 'A';
 
 
 const traverseFlowchart = (flowchart, startId) => {

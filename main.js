@@ -10,9 +10,6 @@ P --> Q[!Wandering Monsters]
 P --> R[!1 Door]
 P --> S[!2 Doors]
 P --> T[!Nothing]
-Q --> U[GM Rolls on Wandering Monsters Table]
-R --> V[Leader Chooses Passage Section for Door]
-S --> W[Leader Chooses Sections for 2 Doors]
 T --> X{Roll for Passage End}
 X --> Y[!T-Junction]
 X --> Z[!Dead End]
@@ -20,21 +17,14 @@ X --> AA[!Right Turn]
 X --> AB[!Left Turn]
 X --> AC[!Stairs Down]  
 X --> AD[!Stairs Out]                
-AE --> AF[Normal]
+AE --> AJ[!Place Small Room, Empty]
 AE --> AG[Hazard]
 AE --> AH[Lair]
 AE --> AI[Quest Room]
-AF --> AJ[!Place Small Room, Empty]
-AG --> AK[!GM Consults Hazards Section]
-AH --> AL[!Roll on Lairs Matrix, Place Treasure]
-AI --> AM[!Roll on Quest Rooms Matrix, Place Treasure]
 AJ --> AN{Roll for Room Doors}
 AN --> AO[None]
 AN --> AP[!1 Door Room]
-AN --> AQ[!2 Doors Room]
-AO --> AR[!Room Has No Additional Exits]
-AP --> AS[!Leader Chooses Wall for Door]
-AQ --> AT[!Leader Chooses Walls for 2 Doors]`;
+AN --> AQ[!2 Doors Room]`;
 
 const flowchart = parseMermaidFlowchart(mermaidText, true);
 console.log("Flowchart Structure:", flowchart);
@@ -48,6 +38,6 @@ document.getElementById("placeRectangles").addEventListener("click", function() 
 });
 
 document.getElementById("addRectangles").addEventListener("click", function() {
-    // Start traversal (assuming 'A' is the starting point)
+    console.log(lastVisitedNode);
     traverseFlowchart(flowchart, lastVisitedNode);
 });

@@ -3,7 +3,8 @@ const Direction = {
     UP: 'up',
     DOWN: 'down',
     LEFT: 'left',
-    RIGHT: 'right'
+    RIGHT: 'right',
+    AUTO: 'auto'    
 };
 
 class Rectangle {
@@ -71,6 +72,7 @@ const rotateDirectionClockwise = (direction) => {
             return direction;
     }
 };
+
 const rotateDirectionAntiClockwise = (direction) => {
     switch (direction) {
         case Direction.UP:
@@ -85,16 +87,16 @@ const rotateDirectionAntiClockwise = (direction) => {
             return direction;
     }
 };
+
 const rectangleLib = {
     rectangles: [], // Array to store rectangles
-
     createRectangle: function(x, y, width, height, fillColor = 'black', lineColor = 'black', scale = 1, direction = Direction.RIGHT, roomString = "") {
         const newRect = new Rectangle(x, y, width, height, fillColor, lineColor, scale, direction, roomString);
         this.rectangles.push(newRect); // Add the new rectangle to the array
         return newRect;
     },
 
-    createRoom: function(roomString, x, y, scale) {
+    createRoom: function(roomString, x, y, scale, direction = Direction.AUTO) {
         const index = roomStrings.indexOf(roomString);
         let prevRect = null; // Declare prevRect outside of the conditional
         if (index !== -1) {
@@ -104,14 +106,14 @@ const rectangleLib = {
             const [width, height] = size.map(val => val * scale);
             let newX = x;
             let newY = y;
-            if (x < 0 && y < 0 && this.rectangles.length > 0) {
-                // If both x and y are negative, and there are existing rectangles
+            if (direction === Direction.AUTO && this.rectangles.length > 0) {
+                //continue in a straight line unless a turn is required
                 prevRect = this.rectangles[this.rectangles.length - 1]; // Retrieve the last rectangle
-                if (prevRect.roomString === "Right Turn") {
+                if (prevRect.roomString == "Right Turn") {
                     prevRect.direction = rotateDirectionClockwise(prevRect.direction);
-                } else if (prevRect.roomString === "Left Turn") {
+                } else if (prevRect.roomString == "Left Turn") {
                     prevRect.direction = rotateDirectionAntiClockwise(prevRect.direction);
-                }
+                }                
                 switch (prevRect.direction) {
                     case Direction.UP:
                         newY = prevRect.y - height;
@@ -128,7 +130,7 @@ const rectangleLib = {
                         break;
                     default:
                         break;
-                }
+                }              
             }
             const newDirection = prevRect ? prevRect.direction : Direction.RIGHT;
             const newRect = this.createRectangle(newX, newY, width, height, fillColor, lineColor, scale, newDirection, roomString);
