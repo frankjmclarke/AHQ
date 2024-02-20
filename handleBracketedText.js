@@ -3,15 +3,24 @@ function handleBracketedText(text) {
     const ctx = canvas.getContext('2d');
     const scale = 3;
 
-
     const roomHandlers = {
         "!Start Exploration": () => {
             console.log("Handling '!Start Exploration'");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             rectangleLib.rectangles = []; // Clear the rectangles array
-            const newRect = rectangleLib.createRoom("Stairs Down", 0, 305, scale, rectangleLib.currentDirection);
-            rectangleLib.rectangles.push(newRect);
-            rectangleLib.drawAllRectangles(ctx);
+            
+            let attempts = 0;
+            while (attempts < 3) { // Attempt up to 3 times
+                const newRect = rectangleLib.createRoom("Stairs Down", 0, 305, scale, rectangleLib.currentDirection);
+                if (newRect !== null) {
+                    rectangleLib.rectangles.push(newRect);
+                    rectangleLib.drawAllRectangles(ctx);
+                    break; // Exit loop if room creation is successful
+                } else {
+                    console.error("Failed to create a new Stairs Down room");
+                    attempts++; // Increment attempts counter
+                }
+            }
         },
         "!Place 1 Section Passage": () => {
             console.log("Handling '!Place 1 Section Passage'");
@@ -47,15 +56,24 @@ function handleBracketedText(text) {
     handler(text);
 
     function handleSingleRoomCreation(roomType) {
-        const newRect = rectangleLib.createRoom(roomType, -1, -1, scale, rectangleLib.currentDirection);
-        rectangleLib.rectangles.push(newRect);
-        rectangleLib.drawAllRectangles(ctx);
-        if (roomType === "Right Turn") {
-            rectangleLib.currentDirection = rotateDirectionClockwise(rectangleLib.currentDirection);
-        } else if (roomType === "Left Turn") {
-            rectangleLib.currentDirection = rotateDirectionAntiClockwise(rectangleLib.currentDirection);
+        let attempts = 0;
+        while (attempts < 3) { // Attempt up to 3 times
+            const newRect = rectangleLib.createRoom(roomType, -1, -1, scale, rectangleLib.currentDirection);
+            if (newRect !== null) {
+                rectangleLib.rectangles.push(newRect);
+                rectangleLib.drawAllRectangles(ctx);
+                if (roomType === "Right Turn") {
+                    rectangleLib.currentDirection = rotateDirectionClockwise(rectangleLib.currentDirection);
+                } else if (roomType === "Left Turn") {
+                    rectangleLib.currentDirection = rotateDirectionAntiClockwise(rectangleLib.currentDirection);
+                }
+                console.log("Current Direction: " + rectangleLib.currentDirection);
+                break; // Exit loop if room creation is successful
+            } else {
+                console.error("Failed to create a new " + roomType);
+                attempts++; // Increment attempts counter
+            }
         }
-        console.log("Current Direction: " + rectangleLib.currentDirection);     
     }
 
     function createMultipleRooms(roomType, count) {

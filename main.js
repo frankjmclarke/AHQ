@@ -52,3 +52,11 @@ document.getElementById("addRectangles").addEventListener("click", function() {
     console.log(lastVisitedNode);
     traverseFlowchart(flowchart, lastVisitedNode);
 });
+/*
+document.getElementById("addRectangles").addEventListener("click", function() {
+    console.log(lastVisitedNode);
+    for (let index = 0; index < 4; index++) {
+        traverseFlowchart(flowchart, "C");       
+    }
+
+});*/
