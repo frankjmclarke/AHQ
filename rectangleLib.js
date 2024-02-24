@@ -36,25 +36,25 @@ class Rectangle {
 
 const sizes = [
     [2, 2], [2, 2], [2, 2], [2, 2], [2, 2], [2, 2],
-    [5, 2], [5, 5], [5, 5], [5, 10], [5, 10]
+    [5, 2], [5, 5], [5, 5], [5, 10], [5, 10], [2,1]
 ];
 
 const roomStrings = [
     "T-Junction", "Dead End", "Right Turn", "Left Turn",
     "Stairs Down", "Stairs Out", "Corridor", "Normal",
-    "Hazard", "Lair", "Quest"
+    "Hazard", "Lair", "Quest", "Door"
 ];
 
 const fillColors = [
-    "red", "blue", "green", "yellow", "black",
-    "red", "blue", "green", "yellow", "black",
-    "red"
+    "red", "blue", "green", "yellow", 
+    "black", "red", "blue", "green", 
+    "yellow", "black","red", "orange"
 ];
 
 const lineColors = [
-    "blue", "green", "yellow", "black", "red",
-    "blue", "green", "yellow", "black", "red",
-    "green"
+    "blue", "green", "yellow", "black", 
+    "red", "blue", "green", "yellow", 
+    "black", "red", "green", "white"
 ];
 
 const rotateDirectionClockwise = (direction) => {
@@ -102,7 +102,7 @@ const rectangleLib = {
             console.error("Room string not found in the mapping.");
             return null;
         }
-    
+
         const fillColor = fillColors[index];
         const lineColor = lineColors[index];
         const size = sizes[index];
@@ -110,19 +110,19 @@ const rectangleLib = {
         let newX = x;
         let newY = y;
         let temp = width;
-    
-        if (x < 0 && y < 0 ) {
+
+        if (x < 0 && y < 0) {
             const prevRect = this.rectangles[this.rectangles.length - 1];
             switch (direction) {
                 case Direction.DOWN:
-                     temp = width;
-                     width = height;
-                     height = temp;
+                    temp = width;
+                    width = height;
+                    height = temp;
                     newY = prevRect.y + prevRect.height;
                     newX = prevRect.x;
                     break;
                 case Direction.UP:
-                     temp = width;
+                    temp = width;
                     width = height;
                     height = temp;
                     newY = prevRect.y - height * scale;
@@ -138,24 +138,26 @@ const rectangleLib = {
                     break;
             }
         }
-    
+
         const newRect = new Rectangle(newX, newY, width, height, fillColor, lineColor, scale, direction, roomString);
-    
+
         // Check if the new rectangle would go off the canvas or overlap an existing rectangle
-        let testy = this.isOutOfBounds(newRect) ;
-        let testy2 = this.checkOverlapWithExisting(newRect) ;        
-        if (this.checkOverlapWithExisting(newRect) ) {
-            console.error("The new rectangle would go off the canvas or overlap an existing rectangle.");
-            //return null; // Return null to indicate failure
+        if (this.isOutOfBounds(newRect)) {
+            console.error("The new rectangle would go off the canvas .");
+            return null;
         }
-    
+        if (this.checkOverlapWithExisting(newRect)) {
+            console.error("The new rectangle would overlap an existing rectangle.");
+            //return null;
+        }        
+
         // Add the new rectangle to the array
         this.rectangles.push(newRect);
         console.log("height " + height + " width " + width + " direction " + direction + " x " + x + " y " + y + " roomString " + roomString);
-    
+
         return newRect;
     },
-    
+
     isOutOfBounds: function (rectangle) {
         // Check if the rectangle is outside the canvas boundaries
         return (
@@ -164,7 +166,7 @@ const rectangleLib = {
             rectangle.y + rectangle.height > canvas.height
         );
     },
-    
+
 
     drawRectangle: function (ctx, rectangle) {
         rectangle.draw(ctx);
@@ -177,7 +179,7 @@ const rectangleLib = {
     checkOverlapWithExisting: function (newRectangle) {
         // Adjusted tolerance to account for minor overlaps
         const tolerance = 1;
-        
+
         // Check if the newRectangle overlaps with any rectangle in the array
         return this.rectangles.some(existingRect => {
             // Calculate adjusted boundaries for more accurate overlap detection
@@ -185,20 +187,20 @@ const rectangleLib = {
             const newY = newRectangle.y - tolerance;
             const newWidth = newRectangle.width + 2 * tolerance;
             const newHeight = newRectangle.height + 2 * tolerance;
-    
+
             const existingX = existingRect.x;
             const existingY = existingRect.y;
             const existingWidth = existingRect.width;
             const existingHeight = existingRect.height;
-    
+
             // Check for overlap considering the adjusted boundaries
             return !(newX + newWidth < existingX ||
-                     existingX + existingWidth < newX ||
-                     newY + newHeight < existingY ||
-                     existingY + existingHeight < newY);
+                existingX + existingWidth < newX ||
+                newY + newHeight < existingY ||
+                existingY + existingHeight < newY);
         });
     },
-    
+
 
     drawAllRectangles: function (ctx) {
         // Check if rectangles array is not null
