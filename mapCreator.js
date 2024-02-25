@@ -5,6 +5,7 @@ class MapCreator {
         this.ctx = this.canvas.getContext('2d');
         this.scale = 3;
         this.roomHandlers = this.initializeRoomHandlers();
+        console.log("MapCreator constructor");
     }
 
     initializeRoomHandlers() {
@@ -20,8 +21,8 @@ class MapCreator {
             "!Stairs Down": () => this.handleSingleRoomCreation("Stairs Down"),
             "!Stairs Out": () => this.handleSingleRoomCreation("Stairs Out"),
             "!Place Small Room, Empty": () => console.log("Handling '!Place Small Room, Empty'"),
-            "!1 Door": () => this.createMultipleRooms("Door", 1),
-            "!2 Doors": () => this.createMultipleRooms("Door", 2),
+            "!1 Door": () => this.doors(1),
+            "!2 Doors": () => this.doors(2),
             "!GM Consults Hazards Section": () => console.log("Handling '!GM Consults Hazards Section'"),
             "!Roll on Lairs Matrix, Place Treasure": () => console.log("Handling '!Roll on Lairs Matrix, Place Treasure'"),
             "!Roll on Quest Rooms Matrix, Place Treasure": () => console.log("Handling '!Roll on Quest Rooms Matrix, Place Treasure'"),
@@ -69,6 +70,7 @@ class MapCreator {
                 } else if (roomType === "Left Turn") {
                     rectangleLib.currentDirection = rotateDirectionAntiClockwise(rectangleLib.currentDirection);
                 }
+                this.passages.push(rectangleLib.rectangles.length - 1); // Add the top index integer to passages
                 console.log("Current Direction: " + rectangleLib.currentDirection);
                 break;
             } else {
@@ -79,8 +81,49 @@ class MapCreator {
     }
 
     createMultipleRooms(roomType, count) {
+        this.passages = [];
         for (let i = 0; i < count; i++) {
             this.handleSingleRoomCreation(roomType);
         }
+        console.log("passages Length " + this.passages.length);
     }
+
+    singleDoor() {
+        let attempts = 0;
+        while (attempts < 3) {
+
+            if (this.passages.length === 0) {
+                console.error("No passage for door " + this.passages.length);
+                return;
+            }
+            let ind = util.randomBetween(0, this.passages.length - 1);
+            ind = this.passages[ind];
+            const x = rectangleLib.rectangles[ind].x;
+            let  y = rectangleLib.rectangles[ind].y;
+            if (util.getD12() > 6) {
+                y += (5 * this.scale);
+            }else{
+                y -= (2 * this.scale);            
+            }
+            const newRect = rectangleLib.createRoom("Door", x + (5 * this.scale), y , this.scale, rectangleLib.currentDirection);
+
+            console.log("singleDoor x " + x + " y " + y);
+            if (newRect !== null) {
+                rectangleLib.rectangles.push(newRect);
+                rectangleLib.drawAllRectangles(this.ctx);
+                break;
+            } else {
+                console.error("Failed to create a new door");
+                attempts++;
+            }
+        }
+    }
+
+    doors(count) {
+        for (let i = 0; i < count; i++) {
+            this.singleDoor();
+        }
+    }
+
+
 }

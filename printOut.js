@@ -1,7 +1,7 @@
-const printOut = (...args) => {
-    const mapCreator = new MapCreator('canvas');
-    console.log(...args);
-    if (args.length > 0) {
-        mapCreator.handleBracketedText(args[0]);
+const printOut = (text, mapCreator) => {
+
+    console.log(text);
+    if (text!="") {
+        mapCreator.handleBracketedText(text);
     }
 };

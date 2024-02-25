@@ -16,6 +16,8 @@ class Rectangle {
         this.lineColor = lineColor; // Line (stroke) color for the rectangle
         this.direction = direction; // Direction of the rectangle
         this.roomString = roomString; // Room type of the rectangle
+        this.door1 = false; // Door 1 flag
+        this.door2 = false; // Door 2 flag
     }
 
     draw(ctx) {
@@ -36,7 +38,7 @@ class Rectangle {
 
 const sizes = [
     [2, 2], [2, 2], [2, 2], [2, 2], [2, 2], [2, 2],
-    [5, 2], [5, 5], [5, 5], [5, 10], [5, 10], [2,1]
+    [5, 2], [5, 5], [5, 5], [5, 10], [5, 10], [2, 1]
 ];
 
 const roomStrings = [
@@ -46,14 +48,14 @@ const roomStrings = [
 ];
 
 const fillColors = [
-    "red", "blue", "green", "yellow", 
-    "black", "red", "blue", "green", 
-    "yellow", "black","red", "orange"
+    "red", "blue", "green", "yellow",
+    "black", "red", "blue", "green",
+    "yellow", "black", "red", "orange"
 ];
 
 const lineColors = [
-    "blue", "green", "yellow", "black", 
-    "red", "blue", "green", "yellow", 
+    "blue", "green", "yellow", "black",
+    "red", "blue", "green", "yellow",
     "black", "red", "green", "white"
 ];
 
@@ -88,6 +90,7 @@ const rotateDirectionAntiClockwise = (direction) => {
 };
 
 const rectangleLib = {
+    prevRect: null,
     rectangles: [], // Array to store rectangles
     createRectangle: function (x, y, width, height, fillColor = 'black', lineColor = 'black', scale = 1, direction = Direction.RIGHT, roomString = "") {
         const newRect = new Rectangle(x, y, width, height, fillColor, lineColor, scale, direction, roomString);
@@ -111,8 +114,12 @@ const rectangleLib = {
         let newY = y;
         let temp = width;
 
+
         if (x < 0 && y < 0) {
-            const prevRect = this.rectangles[this.rectangles.length - 1];
+            if (this.rectangles[this.rectangles.length - 1].roomString !== "Door")
+                this.prevRect = this.rectangles[this.rectangles.length - 1];
+            const prevRect = this.prevRect;
+
             switch (direction) {
                 case Direction.DOWN:
                     temp = width;
@@ -149,11 +156,11 @@ const rectangleLib = {
         if (this.checkOverlapWithExisting(newRect)) {
             console.error("The new rectangle would overlap an existing rectangle.");
             //return null;
-        }        
+        }
 
         // Add the new rectangle to the array
         this.rectangles.push(newRect);
-        console.log("height " + height + " width " + width + " direction " + direction + " x " + x + " y " + y + " roomString " + roomString);
+        console.log("height " + height + " width " + width + " direction " + direction + " x " + newX + " y " + newY + " roomString " + roomString);
 
         return newRect;
     },
@@ -166,7 +173,6 @@ const rectangleLib = {
             rectangle.y + rectangle.height > canvas.height
         );
     },
-
 
     drawRectangle: function (ctx, rectangle) {
         rectangle.draw(ctx);
@@ -200,7 +206,6 @@ const rectangleLib = {
                 existingY + existingHeight < newY);
         });
     },
-
 
     drawAllRectangles: function (ctx) {
         // Check if rectangles array is not null

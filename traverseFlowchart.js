@@ -4,7 +4,7 @@ let lastVisitedNode = 'A';
 
 const traverseFlowchart = (flowchart, startId) => {
   //const visited = new Set(); // To avoid revisiting nodes
-
+  const mapCreator = new MapCreator('canvas');
   const visitNode = (id) => {
     //if (visited.has(id)) return; // Prevent infinite loops
     //visited.add(id); // Mark as visited
@@ -15,7 +15,7 @@ const traverseFlowchart = (flowchart, startId) => {
       return;
     }
 
-    printOut(node.text); 
+    printOut(node.text, mapCreator); 
     if (node.text[0] === "!"){
       lastVisitedNode = 'C'
     }
