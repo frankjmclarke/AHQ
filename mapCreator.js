@@ -38,6 +38,7 @@ class MapCreator {
     handleBracketedText(text) {
         const handler = this.roomHandlers[text] || this.roomHandlers["default"];
         handler(text);
+        rectangleLib.drawAllRectangles(this.ctx);
     }
 
     startExploration() {
@@ -49,7 +50,6 @@ class MapCreator {
             const newRect = rectangleLib.createRoom("Stairs Down", 0, 305, this.scale, rectangleLib.currentDirection);
             if (newRect !== null) {
                 rectangleLib.rectangles.push(newRect);
-                rectangleLib.drawAllRectangles(this.ctx);
                 break;
             } else {
                 console.error("Failed to create a new Stairs Down room");
@@ -64,7 +64,6 @@ class MapCreator {
             const newRect = rectangleLib.createRoom(roomType, -1, -1, this.scale, rectangleLib.currentDirection);
             if (newRect !== null) {
                 rectangleLib.rectangles.push(newRect);
-                rectangleLib.drawAllRectangles(this.ctx);
                 if (roomType === "Right Turn") {
                     rectangleLib.currentDirection = rotateDirectionClockwise(rectangleLib.currentDirection);
                 } else if (roomType === "Left Turn") {
@@ -99,18 +98,18 @@ class MapCreator {
             let ind = util.randomBetween(0, this.passages.length - 1);
             ind = this.passages[ind];
             const x = rectangleLib.rectangles[ind].x;
-            let  y = rectangleLib.rectangles[ind].y;
+            let y = rectangleLib.rectangles[ind].y;
             if (util.getD12() > 6) {
                 y += (5 * this.scale);
-            }else{
-                y -= (2 * this.scale);            
+            } else {
+                y -= (2 * this.scale);
             }
-            const newRect = rectangleLib.createRoom("Door", x + (5 * this.scale), y , this.scale, rectangleLib.currentDirection);
+            const newRect = rectangleLib.createRoom("Door", x + (5 * this.scale), y, this.scale, rectangleLib.currentDirection);
 
-            console.log("singleDoor x " + x + " y " + y);
+
             if (newRect !== null) {
                 rectangleLib.rectangles.push(newRect);
-                rectangleLib.drawAllRectangles(this.ctx);
+                console.log("singleDoor x " + x + " y " + y);
                 break;
             } else {
                 console.error("Failed to create a new door");

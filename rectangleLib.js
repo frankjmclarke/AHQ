@@ -158,8 +158,7 @@ const rectangleLib = {
             //return null;
         }
 
-        // Add the new rectangle to the array
-        this.rectangles.push(newRect);
+        //this.rectangles.push(newRect);
         console.log("height " + height + " width " + width + " direction " + direction + " x " + newX + " y " + newY + " roomString " + roomString);
 
         return newRect;
